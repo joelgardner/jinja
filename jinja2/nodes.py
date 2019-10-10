@@ -699,6 +699,14 @@ class Call(Expr):
     fields = ('node', 'args', 'kwargs', 'dyn_args', 'dyn_kwargs')
 
 
+class Timer(Expr):
+    """Node that records the time to render its children."""
+    fields = ('node', 'statement')
+
+    def as_const(self, ctx):
+        return self.node.as_const(ctx)
+
+
 class Getitem(Expr):
     """Get an attribute or item from an expression and prefer the item."""
     fields = ('node', 'arg', 'ctx')

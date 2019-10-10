@@ -1292,6 +1292,8 @@ class CodeGenerator(NodeVisitor):
                         self.writeline('yield ' + val)
                     else:
                         self.writeline(val + ',')
+                elif isinstance(item, nodes.Timer):
+                    self.visit_Timer(item, frame)
                 else:
                     if frame.buffer is None:
                         self.writeline('yield ', item)
@@ -1544,6 +1546,14 @@ class CodeGenerator(NodeVisitor):
         self.write('environment.getattr(')
         self.visit(node.node, frame)
         self.write(', %r)' % node.attr)
+
+    def visit_Timer(self, node, frame):
+        self.writeline('import time')
+        self.writeline('start_time = time.time()')
+        self.writeline('')
+        self.visit(node.node, frame)
+        self.writeline('end_time = time.time()')
+        self.writeline('print(\'%s took {:.10f}s\'.format(end_time - start_time))' % (node.statement))
 
     @optimizeconst
     def visit_Getitem(self, node, frame):
